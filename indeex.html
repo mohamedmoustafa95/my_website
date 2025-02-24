@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبتي</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #282c34;
+            overflow: hidden;
+        }
+        canvas {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+        .controls {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            background-color: #61dafb;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- أزرار التحكم للموبايل -->
+    <div class="controls">
+        <button id="leftBtn">⬅️</button>
+        <button id="rightBtn">➡️</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // ضبط حجم الـ Canvas ليتناسب مع الشاشة
+        canvas.width = window.innerWidth * 0.9;
+        canvas.height = window.innerHeight * 0.5;
+
+        // كائن اللاعب
+        const player = {
+            x: canvas.width / 2 - 25,
+            y: canvas.height - 50,
+            width: 50,
+            height: 50,
+            color: "red",
+            speed: 5
+        };
+
+        // دالة رسم اللاعب
+        function drawPlayer() {
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
+
+        // تحديث اللعبة
+        function update() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawPlayer();
+            requestAnimationFrame(update);
+        }
+
+        // التحكم بلوحة المفاتيح
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowLeft") player.x -= player.speed;
+            if (event.key === "ArrowRight") player.x += player.speed;
+        });
+
+        // التحكم عبر اللمس
+        document.getElementById("leftBtn").addEventListener("touchstart", () => {
+            player.x -= player.speed * 5;
+        });
+
+        document.getElementById("rightBtn").addEventListener("touchstart", () => {
+            player.x += player.speed * 5;
+        });
+
+        update();
+    </script>
+</body>
+</html>
