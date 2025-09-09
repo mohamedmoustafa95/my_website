@@ -1,103 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لعبة الهروب من الوحش</title>
-    <style>
-        body { margin: 0; overflow: hidden; background: black; color: white; text-align: center; }
-        canvas { display: block; background: #222; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meteor Rain Predictor</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- مكتبة الخريطة Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
-    <h1>اهرب من الوحش!</h1>
-    <canvas id="gameCanvas"></canvas>
-    <script>
-        let canvas = document.getElementById("gameCanvas");
-        let ctx = canvas.getContext("2d");
-        canvas.width = 600;
-        canvas.height = 600;
-        
-        let player = { x: 50, y: 50, size: 20, speed: 4 };
-        let monster = { x: 300, y: 300, size: 30, speed: 1.5 };
-        let mapSize = 600;
-        let walls = [
-            {x: 100, y: 100, width: 100, height: 20},
-            {x: 200, y: 200, width: 20, height: 100},
-            {x: 300, y: 300, width: 150, height: 20},
-        ];
-        
-        let keys = {};
-        window.addEventListener("keydown", (e) => keys[e.key] = true);
-        window.addEventListener("keyup", (e) => keys[e.key] = false);
-        
-        function movePlayer() {
-            let newX = player.x;
-            let newY = player.y;
-            if (keys["ArrowUp"]) newY -= player.speed;
-            if (keys["ArrowDown"]) newY += player.speed;
-            if (keys["ArrowLeft"]) newX -= player.speed;
-            if (keys["ArrowRight"]) newX += player.speed;
-            
-            if (!checkCollision({x: newX, y: newY, size: player.size}, walls)) {
-                player.x = newX;
-                player.y = newY;
-            }
-        }
-        
-        function moveMonster() {
-            let dx = player.x - monster.x;
-            let dy = player.y - monster.y;
-            let distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance > 0) {
-                monster.x += (dx / distance) * monster.speed;
-                monster.y += (dy / distance) * monster.speed;
-            }
-        }
-        
-        function checkCollision(entity, objects) {
-            return objects.some(obj => 
-                entity.x < obj.x + obj.width &&
-                entity.x + entity.size > obj.x &&
-                entity.y < obj.y + obj.height &&
-                entity.y + entity.size > obj.y
-            );
-        }
-        
-        function checkGameOver() {
-            let dx = player.x - monster.x;
-            let dy = player.y - monster.y;
-            let distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance < player.size + monster.size) {
-                alert("لقد أمسك بك الوحش! حاول مجددًا.");
-                location.reload();
-            }
-        }
-        
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = "white";
-            ctx.fillRect(player.x, player.y, player.size, player.size);
-            
-            ctx.fillStyle = "red";
-            ctx.fillRect(monster.x, monster.y, monster.size, monster.size);
-            
-            ctx.fillStyle = "gray";
-            walls.forEach(wall => ctx.fillRect(wall.x, wall.y, wall.width, wall.height));
-        }
-        
-        function gameLoop() {
-            movePlayer();
-            moveMonster();
-            checkGameOver();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
-        
-        gameLoop();
-    </script>
+  <!-- 🔹 Navbar -->
+  <nav>
+    <ul>
+      <li><a href="#home">🏠 Home</a></li>
+      <li><a href="#map-section">🗺️ Map</a></li>
+      <li><a href="#about">ℹ️ About</a></li>
+      <li><a href="#features">✨ Features</a></li>
+      <li><a href="#team">👨‍🚀 Team</a></li>
+      <li><a href="#faq">❓ FAQ</a></li>
+      <li><a href="#contact">📩 Contact</a></li>
+    </ul>
+    <button id="mode-toggle">🌙 Toggle Mode</button>
+  </nav>
+
+  <!-- 🔹 Header -->
+  <header id="home">
+    <h1>☔ Will It Rain On My Parade?</h1>
+    <p>Click anywhere on the map to check the rain probability</p>
+  </header>
+
+  <!-- 🔹 Main Section -->
+  <main id="map-section">
+    <h2>Interactive Map</h2>
+    <div id="map"></div>
+    <div id="result"></div>
+
+    <!-- Dashboard -->
+    <section id="history">
+      <h3>📊 Prediction History</h3>
+      <table id="history-table">
+        <thead>
+          <tr>
+            <th>Lat</th>
+            <th>Lon</th>
+            <th>Rain %</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS هيضيف الصفوف -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- 🔹 About Section -->
+  <section id="about">
+    <h2>About the Project</h2>
+    <p>
+      This project was developed for the NASA Space Apps Challenge 2025 🚀.
+      Our mission is to help people predict rain probabilities in any
+      location around the globe using satellite data and AI.
+    </p>
+    <div class="cards">
+      <div class="card">
+        <h3>🌍 Global Coverage</h3>
+        <p>Get predictions anywhere in the world.</p>
+      </div>
+      <div class="card">
+        <h3>🤖 AI Powered</h3>
+        <p>Machine learning estimates the chance of rainfall.</p>
+      </div>
+      <div class="card">
+        <h3>📱 Easy Access</h3>
+        <p>Mobile friendly, fast, and lightweight design.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🔹 Features Section -->
+  <section id="features">
+    <h2>✨ Features</h2>
+    <ul>
+      <li>Interactive map with markers</li>
+      <li>Prediction history stored locally</li>
+      <li>Dark/Light map modes</li>
+      <li>Responsive mobile design</li>
+      <li>Easy navigation with smooth scroll</li>
+      <li>Custom notifications and alerts</li>
+      <li>Team showcase section</li>
+    </ul>
+  </section>
+
+  <!-- 🔹 Team Section -->
+  <section id="team">
+    <h2>👨‍🚀 Meet the Team</h2>
+    <div class="team-grid">
+      <div class="member">
+        <img src="https://via.placeholder.com/100" alt="member1" />
+        <h4>محمد مصطفى</h4>
+        <p>Frontend Developer</p>
+      </div>
+      <div class="member">
+        <img src="https://via.placeholder.com/100" alt="member2" />
+        <h4>سيف الدين</h4>
+        <p>Backend Developer</p>
+      </div>
+      <div class="member">
+        <img src="https://via.placeholder.com/100" alt="member3" />
+        <h4>أحمد ثروت</h4>
+        <p>Data Scientist</p>
+      </div>
+      <div class="member">
+        <img src="https://via.placeholder.com/100" alt="member4" />
+        <h4>عز الدين كريم</h4>
+        <p>AI Engineer</p>
+      </div>
+      <div class="member">
+        <img src="https://via.placeholder.com/100" alt="member5" />
+        <h4>محمد أسامة</h4>
+        <p>Project Manager</p>
+      </div>
+      <div class="member">
+        <img src="https://via.placeholder.com/100" alt="member6" />
+        <h4>أمل</h4>
+        <p>Designer</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🔹 FAQ Section -->
+  <section id="faq">
+    <h2>❓ Frequently Asked Questions</h2>
+    <details>
+      <summary>How does the prediction work?</summary>
+      <p>We use AI models trained on weather and satellite data.</p>
+    </details>
+    <details>
+      <summary>Is it 100% accurate?</summary>
+      <p>No model is perfect, but we aim for high reliability.</p>
+    </details>
+    <details>
+      <summary>Can I use this offline?</summary>
+      <p>Currently, you need internet access to fetch predictions.</p>
+    </details>
+    <details>
+      <summary>Can I contribute to the project?</summary>
+      <p>Yes! Our project is open-source and welcomes contributors.</p>
+    </details>
+  </section>
+
+  <!-- 🔹 Contact Section -->
+  <section id="contact">
+    <h2>📩 Contact Us</h2>
+    <form>
+      <input type="text" placeholder="Your Name" required />
+      <input type="email" placeholder="Your Email" required />
+      <textarea placeholder="Your Message"></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </section>
+
+  <!-- 🔹 Extra Section -->
+  <section id="extra-info">
+    <h2>🌟 Extra Information</h2>
+    <p>
+      Explore more about meteor showers, rain probabilities, and space
+      weather data from NASA and other organizations.
+    </p>
+  </section>
+
+  <!-- 🔹 Footer -->
+  <footer>
+    <p>Powered by NASA Space Apps 🚀 | Built with ❤️</p>
+    <p>© 2025 Meteor Rain Predictor</p>
+  </footer>
+
+  <!-- سكريبتات -->
+  <script src="app.js"></script>
 </body>
 </html>
