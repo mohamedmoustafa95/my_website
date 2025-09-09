@@ -82,6 +82,7 @@
       <li><a href="#contact">📩 Contact</a></li>
     </ul>
     <button id="mode-toggle">🌙 Toggle Mode</button>
+    <button id="clear-all" style="margin-left: 10px; background:#f44336; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">🗑️ Clear All</button>
   </nav>
 
   <!-- Header -->
@@ -295,7 +296,23 @@
   } else {
     console.log("هذا المتصفح لا يدعم الإشعارات.");
   }
+  document.getElementById("clear-all").addEventListener("click", () => {
+  // إزالة جميع الصفوف من الجدول
+  document.querySelector("#history-table tbody").innerHTML = "";
+
+  // إزالة جميع العلامات من الخريطة
+  markers.forEach(marker => map.removeLayer(marker));
+  markers.clear();
+
+  // مسح السجل من localStorage
+  localStorage.removeItem("history");
+
+  // إشعار للمستخدم
+  alert("✅ All history and markers have been cleared!");
+});
+
 </script>
+
 
 </body>
 </html>
