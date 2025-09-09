@@ -12,15 +12,65 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-  <style>
-    #map { height: 400px; margin-bottom: 20px; }
-    .delete-btn { cursor: pointer; background: none; border: none; font-size: 1.2em; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-  </style>
+ <style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #006280; /* أزرق سماوي فاتح */
+    color: #ffffff; /* نص داكن وواضح */
+  }
+
+  #map { height: 400px; margin-bottom: 20px; }
+  .delete-btn { cursor: pointer; background: none; border: none; font-size: 1.2em; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
+
+  nav {
+    background: #a6c8e0; /* أزرق أهدأ */
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  nav ul { display: flex; list-style: none; padding: 0; margin: 0; }
+  nav ul li { margin-right: 15px; }
+  nav ul li a { text-decoration: none; color: #1a1a1a; font-weight: 500; }
+
+  header, section, footer { padding: 20px; }
+
+  .cards {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .card {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 150px;
+    text-align: center;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+  }
+
+  .team-grid { display: flex; flex-wrap: wrap; gap: 15px; }
+  .member { flex: 1 1 150px; text-align: center; }
+
+  /* Dark Mode */
+  .dark {
+    background: #222;
+    color: #eee;
+  }
+  .dark nav { background: #333; }
+  .dark nav ul li a { color: #eee; }
+  .dark .card { background: #444; color: #eee; }
+</style>
+
 </head>
 <body>
-  <!-- 🔹 Navbar -->
+  <!-- Navbar -->
   <nav>
     <ul>
       <li><a href="#home">🏠 Home</a></li>
@@ -34,19 +84,18 @@
     <button id="mode-toggle">🌙 Toggle Mode</button>
   </nav>
 
-  <!-- 🔹 Header -->
+  <!-- Header -->
   <header id="home">
     <h1>☔ Will It Rain On My Parade?</h1>
     <p>Click anywhere on the map to check the rain probability</p>
   </header>
 
-  <!-- 🔹 Main Section -->
+  <!-- Map Section -->
   <main id="map-section">
     <h2>Interactive Map</h2>
     <div id="map"></div>
     <div id="result"></div>
 
-    <!-- Dashboard -->
     <section id="history">
       <h3>📊 Prediction History</h3>
       <table id="history-table">
@@ -59,38 +108,23 @@
             <th>Remove</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- JS هيضيف الصفوف -->
-        </tbody>
+        <tbody></tbody>
       </table>
     </section>
   </main>
 
-  <!-- 🔹 About Section -->
+  <!-- About Section -->
   <section id="about">
     <h2>About the Project</h2>
-    <p>
-      This project was developed for the NASA Space Apps Challenge 2025 🚀.
-      Our mission is to help people predict rain probabilities in any
-      location around the globe using satellite data and AI.
-    </p>
+    <p>This project was developed for the NASA Space Apps Challenge 2025 🚀. Our mission is to help people predict rain probabilities in any location using satellite data and AI.</p>
     <div class="cards">
-      <div class="card">
-        <h3>🌍 Global Coverage</h3>
-        <p>Get predictions anywhere in the world.</p>
-      </div>
-      <div class="card">
-        <h3>🤖 AI Powered</h3>
-        <p>Machine learning estimates the chance of rainfall.</p>
-      </div>
-      <div class="card">
-        <h3>📱 Easy Access</h3>
-        <p>Mobile friendly, fast, and lightweight design.</p>
-      </div>
+      <div class="card"><h3>🌍 Global Coverage</h3><p>Get predictions anywhere in the world.</p></div>
+      <div class="card"><h3>🤖 AI Powered</h3><p>Machine learning estimates the chance of rainfall.</p></div>
+      <div class="card"><h3>📱 Easy Access</h3><p>Mobile friendly, fast, and lightweight design.</p></div>
     </div>
   </section>
 
-  <!-- 🔹 Features Section -->
+  <!-- Features Section -->
   <section id="features">
     <h2>✨ Features</h2>
     <ul>
@@ -104,65 +138,29 @@
     </ul>
   </section>
 
-  <!-- 🔹 Team Section -->
+  <!-- Team Section -->
   <section id="team">
     <h2>👨‍🚀 Meet the Team</h2>
     <div class="team-grid">
-      <div class="member">
-        <img src="https://via.placeholder.com/100" alt="member1" />
-        <h4>محمد مصطفى</h4>
-        <p>Frontend Developer</p>
-      </div>
-      <div class="member">
-        <img src="https://via.placeholder.com/100" alt="member2" />
-        <h4>سيف الدين</h4>
-        <p>Backend Developer</p>
-      </div>
-      <div class="member">
-        <img src="https://via.placeholder.com/100" alt="member3" />
-        <h4>أحمد ثروت</h4>
-        <p>Data Scientist</p>
-      </div>
-      <div class="member">
-        <img src="https://via.placeholder.com/100" alt="member4" />
-        <h4>عز الدين كريم</h4>
-        <p>AI Engineer</p>
-      </div>
-      <div class="member">
-        <img src="https://via.placeholder.com/100" alt="member5" />
-        <h4>محمد أسامة</h4>
-        <p>Project Manager</p>
-      </div>
-      <div class="member">
-        <img src="https://via.placeholder.com/100" alt="member6" />
-        <h4>أمل</h4>
-        <p>Designer</p>
-      </div>
+      <div class="member"><img src="https://via.placeholder.com/100" alt="member1" /><h4>محمد مصطفى</h4><p>Frontend Developer</p></div>
+      <div class="member"><img src="https://via.placeholder.com/100" alt="member2" /><h4>سيف الدين</h4><p>Backend Developer</p></div>
+      <div class="member"><img src="https://via.placeholder.com/100" alt="member3" /><h4>أحمد ثروت</h4><p>Data Scientist</p></div>
+      <div class="member"><img src="https://via.placeholder.com/100" alt="member4" /><h4>عز الدين كريم</h4><p>AI Engineer</p></div>
+      <div class="member"><img src="https://via.placeholder.com/100" alt="member5" /><h4>محمد أسامة</h4><p>Project Manager</p></div>
+      <div class="member"><img src="https://via.placeholder.com/100" alt="member6" /><h4>أمل</h4><p>Designer</p></div>
     </div>
   </section>
 
-  <!-- 🔹 FAQ Section -->
+  <!-- FAQ Section -->
   <section id="faq">
     <h2>❓ Frequently Asked Questions</h2>
-    <details>
-      <summary>How does the prediction work?</summary>
-      <p>We use AI models trained on weather and satellite data.</p>
-    </details>
-    <details>
-      <summary>Is it 100% accurate?</summary>
-      <p>No model is perfect, but we aim for high reliability.</p>
-    </details>
-    <details>
-      <summary>Can I use this offline?</summary>
-      <p>Currently, you need internet access to fetch predictions.</p>
-    </details>
-    <details>
-      <summary>Can I contribute to the project?</summary>
-      <p>Yes! Our project is open-source and welcomes contributors.</p>
-    </details>
+    <details><summary>How does the prediction work?</summary><p>We use AI models trained on weather and satellite data.</p></details>
+    <details><summary>Is it 100% accurate?</summary><p>No model is perfect, but we aim for high reliability.</p></details>
+    <details><summary>Can I use this offline?</summary><p>Currently, you need internet access to fetch predictions.</p></details>
+    <details><summary>Can I contribute to the project?</summary><p>Yes! Our project is open-source and welcomes contributors.</p></details>
   </section>
 
-  <!-- 🔹 Contact Section -->
+  <!-- Contact Section -->
   <section id="contact">
     <h2>📩 Contact Us</h2>
     <form>
@@ -173,46 +171,43 @@
     </form>
   </section>
 
-  <!-- 🔹 Extra Section -->
+  <!-- Extra Info -->
   <section id="extra-info">
     <h2>🌟 Extra Information</h2>
-    <p>
-      Explore more about meteor showers, rain probabilities, and space
-      weather data from NASA and other organizations.
-    </p>
+    <p>Explore more about meteor showers, rain probabilities, and space weather data from NASA and other organizations.</p>
   </section>
 
-  <!-- 🔹 Footer -->
+  <!-- Footer -->
   <footer>
     <p>Powered by NASA Space Apps 🚀 | Built with ❤️</p>
     <p>© 2025 Meteor Rain Predictor</p>
   </footer>
 
-  <!-- JS -->
   <script>
     // Initialize map
     const map = L.map("map").setView([30.0444, 31.2357], 5);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
     }).addTo(map);
 
-    // Helpers
-    function getRainProbability() { return Math.floor(Math.random() * 101); }
+    const markers = new Map();
+    function getRainProbability() { return Math.floor(Math.random()*101); }
     function getCurrentTime() { return new Date().toLocaleTimeString(); }
+    function generateId() { return Date.now() + Math.random().toString(16).slice(2); }
 
-    function saveToLocalStorage(lat, lon, rainProb, time) {
+    function saveToLocalStorage(id, lat, lon, rainProb, time) {
       let history = JSON.parse(localStorage.getItem("history")) || [];
-      history.push({ lat, lon, rainProb, time });
+      history.push({ id, lat, lon, rainProb, time });
       localStorage.setItem("history", JSON.stringify(history));
     }
 
-    function removeFromLocalStorage(lat, lon, time) {
+    function removeFromLocalStorage(id) {
       let history = JSON.parse(localStorage.getItem("history")) || [];
-      history = history.filter(item => !(item.lat === lat && item.lon === lon && item.time === time));
+      history = history.filter(item => item.id !== id);
       localStorage.setItem("history", JSON.stringify(history));
     }
 
-    function addHistoryRow(lat, lon, rainProb, time) {
+    function addHistoryRow(id, lat, lon, rainProb, time) {
       const tbody = document.querySelector("#history-table tbody");
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -224,33 +219,31 @@
       `;
       tbody.appendChild(row);
 
-      // Delete button
+      const marker = L.marker([lat, lon]).addTo(map)
+        .bindPopup(`Rain: ${rainProb}%<br>(${lat}, ${lon})`);
+      markers.set(id, marker);
+
       row.querySelector(".delete-btn").addEventListener("click", () => {
         row.remove();
-        removeFromLocalStorage(lat, lon, time);
+        map.removeLayer(marker);
+        markers.delete(id);
+        removeFromLocalStorage(id);
       });
     }
 
     function loadHistory() {
       const history = JSON.parse(localStorage.getItem("history")) || [];
-      history.forEach(item => addHistoryRow(item.lat, item.lon, item.rainProb, item.time));
+      history.forEach(item => addHistoryRow(item.id, item.lat, item.lon, item.rainProb, item.time));
     }
 
-    // Map click
-    map.on("click", function(e) {
+    map.on("click", e => {
       const lat = e.latlng.lat.toFixed(2);
       const lon = e.latlng.lng.toFixed(2);
       const rainProb = getRainProbability();
       const time = getCurrentTime();
-
-      L.marker([lat, lon])
-        .addTo(map)
-        .bindPopup(`Rain: ${rainProb}%<br>(${lat}, ${lon})`)
-        .openPopup();
-
-      addHistoryRow(lat, lon, rainProb, time);
-      saveToLocalStorage(lat, lon, rainProb, time);
-
+      const id = generateId();
+      addHistoryRow(id, lat, lon, rainProb, time);
+      saveToLocalStorage(id, lat, lon, rainProb, time);
       document.getElementById("result").innerHTML = `
         <h3>📍 Location: (${lat}, ${lon})</h3>
         <p>🌧️ Rain Probability: <strong>${rainProb}%</strong></p>
@@ -260,33 +253,49 @@
 
     loadHistory();
 
-    // Navbar smooth scroll
-    document.querySelectorAll("nav a").forEach(link => {
-      link.addEventListener("click", function(e) {
-        e.preventDefault();
-        const targetId = this.getAttribute("href").substring(1);
-        const targetElement = document.getElementById(targetId);
-        if (targetElement) {
-          window.scrollTo({ top: targetElement.offsetTop - 50, behavior: "smooth" });
-        }
-      });
-    });
-
-    // Dark mode toggle
     const modeToggle = document.getElementById("mode-toggle");
     modeToggle.addEventListener("click", () => {
       document.body.classList.toggle("dark");
-      modeToggle.textContent = 
-        document.body.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode";
+      modeToggle.textContent = document.body.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode";
     });
 
-    // Fake contact form
     const form = document.querySelector("#contact form");
     form.addEventListener("submit", e => {
       e.preventDefault();
       alert("✅ Your message has been sent successfully!");
       form.reset();
     });
+
+    document.querySelectorAll("nav a").forEach(link => {
+      link.addEventListener("click", function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute("href").substring(1);
+        const targetElement = document.getElementById(targetId);
+        if(targetElement) {
+          window.scrollTo({ top: targetElement.offsetTop - 50, behavior: 'smooth' });
+        }
+      });
+    });
   </script>
+  <script>
+  // تحقق من دعم المتصفح للإشعارات
+  if ("Notification" in window) {
+    // اطلب إذن من المستخدم
+    if (Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+
+    // إذا سمح المستخدم
+    if (Notification.permission === "granted") {
+      new Notification("🎉 Welcome!", {
+        body: "Welcome to Meteor Rain Predictor! Click anywhere on the map to check the rain probability.",
+        icon: "https://via.placeholder.com/100" // ضع أي أيقونة تحبها هنا
+      });
+    }
+  } else {
+    console.log("هذا المتصفح لا يدعم الإشعارات.");
+  }
+</script>
+
 </body>
 </html>
