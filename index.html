@@ -4,14 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meteor Rain Predictor</title>
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
+
   <!-- مكتبة الخريطة Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
   <!-- 🔹 Navbar -->
-  <nav>
+  <nav id="navbar">
     <ul>
       <li><a href="#home">🏠 Home</a></li>
       <li><a href="#map-section">🗺️ Map</a></li>
@@ -46,10 +49,11 @@
             <th>Lon</th>
             <th>Rain %</th>
             <th>Time</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          <!-- JS هيضيف الصفوف -->
+          <!-- JS سيضيف الصفوف مع زر Delete لكل صف -->
         </tbody>
       </table>
     </section>
@@ -178,6 +182,45 @@
   </footer>
 
   <!-- سكريبتات -->
-  <script src="app.js"></script>
+  <script>
+    // هذا الكود يضيف زر Delete لكل صف عند إضافته
+    function addRow(lat, lon, rain, time, marker) {
+      const table = document.querySelector('#history-table tbody');
+      const row = document.createElement('tr');
+
+      row.innerHTML = `
+        <td>${lat}</td>
+        <td>${lon}</td>
+        <td>${rain}</td>
+        <td>${time}</td>
+        <td><button class="delete-btn">Delete</button></td>
+      `;
+
+      // عند الضغط على Delete يحذف الصف والMarker
+      row.querySelector('.delete-btn').addEventListener('click', () => {
+        map.removeLayer(marker);
+        row.remove();
+      });
+
+      table.appendChild(row);
+    }
+
+    // إعداد الماب
+    const map = L.map('map').setView([30.0444, 31.2357], 6); // مثال: مصر
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // عند الضغط على الماب
+    map.on('click', function(e) {
+      const lat = e.latlng.lat.toFixed(4);
+      const lon = e.latlng.lng.toFixed(4);
+      const rain = Math.floor(Math.random() * 101); // مثال عشوائي
+      const time = new Date().toLocaleTimeString();
+
+      const marker = L.marker([lat, lon]).addTo(map);
+      addRow(lat, lon, rain + '%', time, marker);
+    });
+  </script>
 </body>
 </html>

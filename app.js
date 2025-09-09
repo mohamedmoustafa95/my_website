@@ -33,12 +33,12 @@ map.on("click", function (e) {
   `;
 
   // Add marker on the map
-  L.marker([lat, lon])
+  const marker = L.marker([lat, lon])
     .addTo(map)
     .bindPopup(`Rain: ${rainProb}%<br>(${lat}, ${lon})`)
     .openPopup();
 
-  // Add row to Prediction History table
+  // Add row to Prediction History table with Delete button
   const historyTable = document.querySelector("#history-table tbody");
   const newRow = document.createElement("tr");
   newRow.innerHTML = `
@@ -46,8 +46,16 @@ map.on("click", function (e) {
     <td>${lon}</td>
     <td>${rainProb}%</td>
     <td>${time}</td>
+    <td><button class="delete-btn">Delete</button></td>
   `;
   historyTable.appendChild(newRow);
+
+  // Delete button functionality
+  newRow.querySelector(".delete-btn").addEventListener("click", () => {
+    map.removeLayer(marker); // Remove marker from map
+    newRow.remove();         // Remove row from table
+    removeFromLocalStorage(lat, lon, rainProb, time); // Remove from storage
+  });
 
   // Save to localStorage
   saveToLocalStorage(lat, lon, rainProb, time);
@@ -59,20 +67,43 @@ function saveToLocalStorage(lat, lon, rainProb, time) {
   history.push({ lat, lon, rainProb, time });
   localStorage.setItem("history", JSON.stringify(history));
 }
+
+function removeFromLocalStorage(lat, lon, rainProb, time) {
+  let history = JSON.parse(localStorage.getItem("history")) || [];
+  history = history.filter(
+    item =>
+      !(item.lat == lat && item.lon == lon && item.rainProb == rainProb && item.time == time)
+  );
+  localStorage.setItem("history", JSON.stringify(history));
+}
+
 function loadHistory() {
   let history = JSON.parse(localStorage.getItem("history")) || [];
   const historyTable = document.querySelector("#history-table tbody");
   history.forEach(item => {
+    const marker = L.marker([item.lat, item.lon])
+      .addTo(map)
+      .bindPopup(`Rain: ${item.rainProb}%<br>(${item.lat}, ${item.lon})`);
+
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${item.lat}</td>
       <td>${item.lon}</td>
       <td>${item.rainProb}%</td>
       <td>${item.time}</td>
+      <td><button class="delete-btn">Delete</button></td>
     `;
     historyTable.appendChild(row);
+
+    // Delete button
+    row.querySelector(".delete-btn").addEventListener("click", () => {
+      map.removeLayer(marker);
+      row.remove();
+      removeFromLocalStorage(item.lat, item.lon, item.rainProb, item.time);
+    });
   });
 }
+
 loadHistory();
 
 // ✅ Smooth scroll for navbar links
@@ -102,6 +133,6 @@ form.addEventListener("submit", (e) => {
 const modeToggle = document.getElementById("mode-toggle");
 modeToggle.addEventListener("click", () => {
   document.body.classList.toggle("dark");
-  modeToggle.textContent = 
+  modeToggle.textContent =
     document.body.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode";
 });
