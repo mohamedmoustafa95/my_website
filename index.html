@@ -12,46 +12,74 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #006280; 
-      color: #ffffff;
-    }
-    #map { height: 400px; margin-bottom: 20px; }
-    .delete-btn { cursor: pointer; background: none; border: none; font-size: 1.2em; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
-    nav {
-      background: #a6c8e0;
-      padding: 10px;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    nav ul { display: flex; list-style: none; padding: 0; margin: 0; }
-    nav ul li { margin-right: 15px; }
-    nav ul li a { text-decoration: none; color: #1a1a1a; font-weight: 500; }
-    header, section, footer { padding: 20px; }
-    .cards { display: flex; gap: 15px; flex-wrap: wrap; }
-    .card {
-      background: #ffffff;
-      padding: 15px;
-      border-radius: 8px;
-      flex: 1;
-      min-width: 150px;
-      text-align: center;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.12);
-    }
-    .team-grid { display: flex; flex-wrap: wrap; gap: 15px; }
-    .member { flex: 1 1 150px; text-align: center; }
-    .dark { background: #222; color: #eee; }
-    .dark nav { background: #333; }
-    .dark nav ul li a { color: #eee; }
-    .dark .card { background: #444; color: #eee; }
-  </style>
+  <!-- مكتبة البحث -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+ <style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #5804f3;
+    color: #ffffff;
+  }
+
+  #map { height: 400px; margin-bottom: 20px; }
+  .delete-btn { cursor: pointer; background: none; border: none; font-size: 1.2em; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
+
+  nav {
+    background: #a6c8e0;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  nav ul { display: flex; list-style: none; padding: 0; margin: 0; }
+  nav ul li { margin-right: 15px; }
+  nav ul li a { text-decoration: none; color: #1a1a1a; font-weight: 500; }
+
+  header, section, footer { padding: 20px; }
+
+  .cards {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .card {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 150px;
+    text-align: center;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+    color: #000;
+  }
+
+  .team-grid { display: flex; flex-wrap: wrap; gap: 15px; }
+  .member { flex: 1 1 150px; text-align: center; }
+
+  /* Dark Mode */
+  .dark { background: #222; color: #eee; }
+  .dark nav { background: #333; }
+  .dark nav ul li a { color: #eee; }
+  .dark .card { background: #444; color: #eee; }
+
+  /* أزرار التحكم */
+  .leaflet-control button {
+    margin: 2px;
+    padding: 5px 8px;
+    cursor: pointer;
+    border: none;
+    background: white;
+    border-radius: 4px;
+  }
+</style>
+
 </head>
 <body>
   <!-- Navbar -->
@@ -66,7 +94,6 @@
       <li><a href="#contact">📩 Contact</a></li>
     </ul>
     <button id="mode-toggle">🌙 Toggle Mode</button>
-    <button id="clear-all" style="margin-left: 10px; background:#f44336; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">🗑️ Clear All</button>
   </nav>
 
   <!-- Header -->
@@ -80,6 +107,7 @@
     <h2>Interactive Map</h2>
     <div id="map"></div>
     <div id="result"></div>
+
     <section id="history">
       <h3>📊 Prediction History</h3>
       <table id="history-table">
@@ -100,7 +128,7 @@
   <!-- About Section -->
   <section id="about">
     <h2>About the Project</h2>
-    <p>This project was developed for the NASA Space Apps Challenge 2025 🚀. Our mission is to help people predict rain probabilities in any location using satellite data and AI.</p>
+    <p>This project was developed for the NASA Space Apps Challenge 2025 🚀.</p>
     <div class="cards">
       <div class="card"><h3>🌍 Global Coverage</h3><p>Get predictions anywhere in the world.</p></div>
       <div class="card"><h3>🤖 AI Powered</h3><p>Machine learning estimates the chance of rainfall.</p></div>
@@ -126,12 +154,12 @@
   <section id="team">
     <h2>👨‍🚀 Meet the Team</h2>
     <div class="team-grid">
-      <div class="member"><img src="https://via.placeholder.com/100" alt="member1" /><h4>محمد مصطفى</h4><p>Frontend Developer</p></div>
-      <div class="member"><img src="https://via.placeholder.com/100" alt="member2" /><h4>سيف الدين</h4><p>Backend Developer</p></div>
-      <div class="member"><img src="https://via.placeholder.com/100" alt="member3" /><h4>أحمد ثروت</h4><p>Data Scientist</p></div>
-      <div class="member"><img src="https://via.placeholder.com/100" alt="member4" /><h4>عز الدين كريم</h4><p>AI Engineer</p></div>
-      <div class="member"><img src="https://via.placeholder.com/100" alt="member5" /><h4>محمد أسامة</h4><p>Project Manager</p></div>
-      <div class="member"><img src="https://via.placeholder.com/100" alt="member6" /><h4>أمل</h4><p>Designer</p></div>
+      <div class="member"><img src="https://via.placeholder.com/100" /><h4>محمد مصطفى</h4><p>Frontend Developer</p></div>
+      <div class="member"><img src="https://via.placeholder.com/100" /><h4>سيف الدين</h4><p>Backend Developer</p></div>
+      <div class="member"><img src="https://via.placeholder.com/100" /><h4>أحمد ثروت</h4><p>Data Scientist</p></div>
+      <div class="member"><img src="https://via.placeholder.com/100" /><h4>عز الدين كريم</h4><p>AI Engineer</p></div>
+      <div class="member"><img src="https://via.placeholder.com/100" /><h4>محمد أسامة</h4><p>Project Manager</p></div>
+      <div class="member"><img src="https://via.placeholder.com/100" /><h4>أمل</h4><p>Designer</p></div>
     </div>
   </section>
 
@@ -168,13 +196,24 @@
   </footer>
 
   <script>
+    // ✅ إشعار ترحيب
+    window.onload = () => {
+      if ("Notification" in window) {
+        Notification.requestPermission().then(perm => {
+          if (perm === "granted") {
+            new Notification("👋 Welcome to Meteor Rain Predictor!");
+          }
+        });
+      }
+    };
+
+    // Initialize map
     const map = L.map("map").setView([30.0444, 31.2357], 5);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+      attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
     const markers = new Map();
-
     function getRainProbability() { return Math.floor(Math.random()*101); }
     function getCurrentTime() { return new Date().toLocaleTimeString(); }
     function generateId() { return Date.now() + Math.random().toString(16).slice(2); }
@@ -184,6 +223,7 @@
       history.push({ id, lat, lon, rainProb, time });
       localStorage.setItem("history", JSON.stringify(history));
     }
+
     function removeFromLocalStorage(id) {
       let history = JSON.parse(localStorage.getItem("history")) || [];
       history = history.filter(item => item.id !== id);
@@ -202,7 +242,8 @@
       `;
       tbody.appendChild(row);
 
-      const marker = L.marker([lat, lon]).addTo(map).bindPopup(`Rain: ${rainProb}%<br>(${lat}, ${lon})`);
+      const marker = L.marker([lat, lon]).addTo(map)
+        .bindPopup(`Rain: ${rainProb}%<br>(${lat}, ${lon})`);
       markers.set(id, marker);
 
       row.querySelector(".delete-btn").addEventListener("click", () => {
@@ -218,18 +259,6 @@
       history.forEach(item => addHistoryRow(item.id, item.lat, item.lon, item.rainProb, item.time));
     }
 
-    function showNotification(title, body) {
-      if (Notification.permission === "granted") {
-        new Notification(title, { body });
-      } else if (Notification.permission !== "denied") {
-        Notification.requestPermission().then(permission => {
-          if (permission === "granted") {
-            new Notification(title, { body });
-          }
-        });
-      }
-    }
-
     map.on("click", e => {
       const lat = e.latlng.lat.toFixed(2);
       const lon = e.latlng.lng.toFixed(2);
@@ -243,45 +272,85 @@
         <p>🌧️ Rain Probability: <strong>${rainProb}%</strong></p>
         <p>🕒 Time: ${time}</p>
       `;
-      // إشعار
-      showNotification("🌧️ New Prediction", `(${lat}, ${lon}) → Rain: ${rainProb}% at ${time}`);
     });
 
     loadHistory();
 
-    document.getElementById("mode-toggle").addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-    });
-
-    document.getElementById("clear-all").addEventListener("click", () => {
-      document.querySelector("#history-table tbody").innerHTML = "";
-      markers.forEach(marker => map.removeLayer(marker));
-      markers.clear();
-      localStorage.removeItem("history");
-      alert("✅ All history and markers have been cleared!");
-    });
-
-    // My Location button
+    // ✅ زرار My Location
     const locateBtn = L.control({ position: "topright" });
     locateBtn.onAdd = function () {
       const btn = L.DomUtil.create("button", "locate-btn");
       btn.innerHTML = "📍 My Location";
-      btn.style.padding = "5px";
-      btn.style.background = "white";
-      btn.style.cursor = "pointer";
-      btn.onclick = function () {
+      btn.onclick = () => {
         if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition((pos) => {
+          navigator.geolocation.getCurrentPosition(pos => {
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
             map.setView([lat, lon], 12);
-            L.marker([lat, lon]).addTo(map).bindPopup("📍 You are here").openPopup();
+            L.marker([lat, lon]).addTo(map)
+              .bindPopup("📍 You are here").openPopup();
           });
         }
       };
       return btn;
     };
     locateBtn.addTo(map);
+
+    // ✅ زرار Clear All
+    const clearBtn = L.control({ position: "topright" });
+    clearBtn.onAdd = function () {
+      const btn = L.DomUtil.create("button", "clear-btn");
+      btn.innerHTML = "🗑️ Clear All";
+      btn.onclick = () => {
+        document.querySelector("#history-table tbody").innerHTML = "";
+        markers.forEach(marker => map.removeLayer(marker));
+        markers.clear();
+        localStorage.removeItem("history");
+      };
+      return btn;
+    };
+    clearBtn.addTo(map);
+
+    // ✅ Search Bar
+   // ✅ Search Bar
+var geocoder = L.Control.geocoder({
+  defaultMarkGeocode: false
+})
+.on('markgeocode', function(e) {
+  const lat = e.geocode.center.lat.toFixed(2);
+  const lon = e.geocode.center.lng.toFixed(2);
+  const rainProb = getRainProbability();
+  const time = getCurrentTime();
+  const id = generateId();
+
+  map.setView([lat, lon], 10);
+
+  addHistoryRow(id, lat, lon, rainProb, time);
+  saveToLocalStorage(id, lat, lon, rainProb, time);
+
+  document.getElementById("result").innerHTML = `
+    <h3>📍 Location: (${lat}, ${lon})</h3>
+    <p>🌧️ Rain Probability: <strong>${rainProb}%</strong></p>
+    <p>🕒 Time: ${time}</p>
+  `;
+})
+.addTo(map);
+
+
+    // ✅ Toggle Mode
+    const modeToggle = document.getElementById("mode-toggle");
+    modeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      modeToggle.textContent = document.body.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode";
+    });
+
+    // ✅ Contact Form
+    const form = document.querySelector("#contact form");
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      alert("✅ Your message has been sent successfully!");
+      form.reset();
+    });
   </script>
 </body>
 </html>
