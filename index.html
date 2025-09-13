@@ -1,358 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meteor Rain Predictor</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Do You Love Me?</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: pink;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css" />
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+    }
 
-  <!-- مكتبة الخريطة Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    img {
+      width: 150px;
+      margin-bottom: 20px;
+    }
 
-  <!-- مكتبة البحث -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    h1 {
+      margin-bottom: 30px;
+    }
 
- <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #04f368;
-    color: #ffffff;
-  }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      position: relative;
+    }
 
-  #map { height: 400px; margin-bottom: 20px; }
-  .delete-btn { cursor: pointer; background: none; border: none; font-size: 1.2em; }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+      position: absolute;
+    }
 
-  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
+    #yesBtn {
+      background: #ff4d79;
+      color: white;
+      left: 100px;
+    }
 
-  nav {
-    background: #a6c8e0;
-    padding: 10px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-  }
-  nav ul { display: flex; list-style: none; padding: 0; margin: 0; }
-  nav ul li { margin-right: 15px; }
-  nav ul li a { text-decoration: none; color: #1a1a1a; font-weight: 500; }
+    #noBtn {
+      background: #ccc;
+      color: black;
+      right: 100px;
+    }
 
-  header, section, footer { padding: 20px; }
-
-  .cards {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-  }
-  .card {
-    background: #ffffff;
-    padding: 15px;
-    border-radius: 8px;
-    flex: 1;
-    min-width: 150px;
-    text-align: center;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.12);
-    color: #000;
-  }
-
-  .team-grid { display: flex; flex-wrap: wrap; gap: 15px; }
-  .member { flex: 1 1 150px; text-align: center; }
-
-  /* Dark Mode */
-  .dark { background: #222; color: #eee; }
-  .dark nav { background: #333; }
-  .dark nav ul li a { color: #eee; }
-  .dark .card { background: #444; color: #eee; }
-
-  /* أزرار التحكم */
-  .leaflet-control button {
-    margin: 2px;
-    padding: 5px 8px;
-    cursor: pointer;
-    border: none;
-    background: white;
-    border-radius: 4px;
-  }
-</style>
-
+    .result {
+      display: none;
+      margin-top: 20px;
+      font-size: 24px;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav>
-    <ul>
-      <li><a href="#home">🏠 Home</a></li>
-      <li><a href="#map-section">🗺️ Map</a></li>
-      <li><a href="#about">ℹ️ About</a></li>
-      <li><a href="#features">✨ Features</a></li>
-      <li><a href="#team">👨‍🚀 Team</a></li>
-      <li><a href="#faq">❓ FAQ</a></li>
-      <li><a href="#contact">📩 Contact</a></li>
-    </ul>
-    <button id="mode-toggle">🌙 Toggle Mode</button>
-  </nav>
-
-  <!-- Header -->
-  <header id="home">
-    <h1>☔ Will It Rain On My Parade?</h1>
-    <p>Click anywhere on the map to check the rain probability</p>
-  </header>
-
-  <!-- Map Section -->
-  <main id="map-section">
-    <h2>Interactive Map</h2>
-    <div id="map"></div>
-    <div id="result"></div>
-
-    <section id="history">
-      <h3>📊 Prediction History</h3>
-      <table id="history-table">
-        <thead>
-          <tr>
-            <th>Lat</th>
-            <th>Lon</th>
-            <th>Rain %</th>
-            <th>Time</th>
-            <th>Remove</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
-  </main>
-
-  <!-- About Section -->
-  <section id="about">
-    <h2>About the Project</h2>
-    <p>This project was developed for the NASA Space Apps Challenge 2025 🚀.</p>
-    <div class="cards">
-      <div class="card"><h3>🌍 Global Coverage</h3><p>Get predictions anywhere in the world.</p></div>
-      <div class="card"><h3>🤖 AI Powered</h3><p>Machine learning estimates the chance of rainfall.</p></div>
-      <div class="card"><h3>📱 Easy Access</h3><p>Mobile friendly, fast, and lightweight design.</p></div>
+  <div class="container" id="questionContainer">
+    <img src="200.webp" alt="cute gif">
+    <h1>Do you love me?</h1>
+    <div class="buttons">
+      <button id="yesBtn">Yes</button>
+      <button id="noBtn">No</button>
     </div>
-  </section>
-
-  <!-- Features Section -->
-<section id="features">
-  <h2>✨ Features</h2>
-  <ul>
-    <li><a href="map.html" target="_blank">🗺️ Interactive map with markers</a></li>
-    <li><a href="history.html" target="_blank">📊 Prediction history stored locally</a></li>
-    <li><a href="darkmode.html" target="_blank">🌙 Dark/Light map modes</a></li>
-    <li><a href="responsive.html" target="_blank">📱 Responsive mobile design</a></li>
-    <li><a href="navigation.html" target="_blank">🧭 Easy navigation with smooth scroll</a></li>
-    <li><a href="notifications.html" target="_blank">🔔 Custom notifications and alerts</a></li>
-    <li><a href="team.html" target="_blank">👨‍🚀 Team showcase section</a></li>
-  </ul>
-</section>
 
 
-  <!-- Team Section -->
-  <section id="team">
-    <h2>👨‍🚀 Meet the Team</h2>
-    <div class="team-grid">
-      <div class="member"><img src="https://via.placeholder.com/100" /><h4>محمد مصطفى</h4><p>Frontend Developer</p></div>
-      <div class="member"><img src="https://via.placeholder.com/100" /><h4>سيف الدين</h4><p>Backend Developer</p></div>
-      <div class="member"><img src="https://via.placeholder.com/100" /><h4>أحمد ثروت</h4><p>Data Scientist</p></div>
-      <div class="member"><img src="https://via.placeholder.com/100" /><h4>عز الدين كريم</h4><p>AI Engineer</p></div>
-      <div class="member"><img src="https://via.placeholder.com/100" /><h4>محمد أسامة</h4><p>Project Manager</p></div>
-      <div class="member"><img src="https://via.placeholder.com/100" /><h4>أمل</h4><p>Designer</p></div>
-    </div>
-  </section>
 
-  <!-- FAQ Section -->
-  <section id="faq">
-    <h2>❓ Frequently Asked Questions</h2>
-    <details><summary>How does the prediction work?</summary><p>We use AI models trained on weather and satellite data.</p></details>
-    <details><summary>Is it 100% accurate?</summary><p>No model is perfect, but we aim for high reliability.</p></details>
-    <details><summary>Can I use this offline?</summary><p>Currently, you need internet access to fetch predictions.</p></details>
-    <details><summary>Can I contribute to the project?</summary><p>Yes! Our project is open-source and welcomes contributors.</p></details>
-  </section>
-
-  <!-- Contact Section -->
-  <section id="contact">
-    <h2>📩 Contact Us</h2>
-    <form>
-      <input type="text" placeholder="Your Name" required />
-      <input type="email" placeholder="Your Email" required />
-      <textarea placeholder="Your Message"></textarea>
-      <button type="submit">Send</button>
-    </form>
-  </section>
-
-  <!-- Extra Info -->
-  <section id="extra-info">
-    <h2>🌟 Extra Information</h2>
-    <p>Explore more about meteor showers, rain probabilities, and space weather data from NASA and other organizations.</p>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <p>Powered by NASA Space Apps 🚀 | Built with ❤️</p>
-    <p>© 2025 Meteor Rain Predictor</p>
-  </footer>
+    <div class="result" id="resultContainer">        I love you too! 💖</div>
+  </div>
 
   <script>
-    // ✅ إشعار ترحيب
-    window.onload = () => {
-      if ("Notification" in window) {
-        Notification.requestPermission().then(perm => {
-          if (perm === "granted") {
-            new Notification("👋 Welcome to Meteor Rain Predictor!");
-          }
-        });
-      }
-    };
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const container = document.getElementById("questionContainer");
+    const result = document.getElementById("resultContainer");
 
-    // Initialize map
-    const map = L.map("map").setView([30.0444, 31.2357], 5);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; OpenStreetMap'
-    }).addTo(map);
+    // زرار "No" بيهرب عند مرور الماوس
+    noBtn.addEventListener("mouseover", () => {
+      const containerRect = container.getBoundingClientRect();
+      const x = Math.floor(Math.random() * (containerRect.width - noBtn.offsetWidth));
+      const y = Math.floor(Math.random() * (containerRect.height - noBtn.offsetHeight));
 
-    const markers = new Map();
-    function getRainProbability() { return Math.floor(Math.random()*101); }
-    function getCurrentTime() { return new Date().toLocaleTimeString(); }
-    function generateId() { return Date.now() + Math.random().toString(16).slice(2); }
-
-    function saveToLocalStorage(id, lat, lon, rainProb, time) {
-      let history = JSON.parse(localStorage.getItem("history")) || [];
-      history.push({ id, lat, lon, rainProb, time });
-      localStorage.setItem("history", JSON.stringify(history));
-    }
-
-    function removeFromLocalStorage(id) {
-      let history = JSON.parse(localStorage.getItem("history")) || [];
-      history = history.filter(item => item.id !== id);
-      localStorage.setItem("history", JSON.stringify(history));
-    }
-
-    function addHistoryRow(id, lat, lon, rainProb, time) {
-      const tbody = document.querySelector("#history-table tbody");
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${lat}</td>
-        <td>${lon}</td>
-        <td>${rainProb}%</td>
-        <td>${time}</td>
-        <td><button class="delete-btn">✖️</button></td>
-      `;
-      tbody.appendChild(row);
-
-      const marker = L.marker([lat, lon]).addTo(map)
-        .bindPopup(`Rain: ${rainProb}%<br>(${lat}, ${lon})`);
-      markers.set(id, marker);
-
-      row.querySelector(".delete-btn").addEventListener("click", () => {
-        row.remove();
-        map.removeLayer(marker);
-        markers.delete(id);
-        removeFromLocalStorage(id);
-      });
-    }
-
-    function loadHistory() {
-      const history = JSON.parse(localStorage.getItem("history")) || [];
-      history.forEach(item => addHistoryRow(item.id, item.lat, item.lon, item.rainProb, item.time));
-    }
-
-    map.on("click", e => {
-      const lat = e.latlng.lat.toFixed(2);
-      const lon = e.latlng.lng.toFixed(2);
-      const rainProb = getRainProbability();
-      const time = getCurrentTime();
-      const id = generateId();
-      addHistoryRow(id, lat, lon, rainProb, time);
-      saveToLocalStorage(id, lat, lon, rainProb, time);
-      document.getElementById("result").innerHTML = `
-        <h3>📍 Location: (${lat}, ${lon})</h3>
-        <p>🌧️ Rain Probability: <strong>${rainProb}%</strong></p>
-        <p>🕒 Time: ${time}</p>
-      `;
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
     });
 
-    loadHistory();
-
-    // ✅ زرار My Location
-    const locateBtn = L.control({ position: "topright" });
-    locateBtn.onAdd = function () {
-      const btn = L.DomUtil.create("button", "locate-btn");
-      btn.innerHTML = "📍 My Location";
-      btn.onclick = () => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(pos => {
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-            map.setView([lat, lon], 12);
-            L.marker([lat, lon]).addTo(map)
-              .bindPopup("📍 You are here").openPopup();
-          });
-        }
-      };
-      return btn;
-    };
-    locateBtn.addTo(map);
-
-    // ✅ زرار Clear All
-    const clearBtn = L.control({ position: "topright" });
-    clearBtn.onAdd = function () {
-      const btn = L.DomUtil.create("button", "clear-btn");
-      btn.innerHTML = "🗑️ Clear All";
-      btn.onclick = () => {
-        document.querySelector("#history-table tbody").innerHTML = "";
-        markers.forEach(marker => map.removeLayer(marker));
-        markers.clear();
-        localStorage.removeItem("history");
-      };
-      return btn;
-    };
-    clearBtn.addTo(map);
-
-    // ✅ Search Bar
-   // ✅ Search Bar
-var geocoder = L.Control.geocoder({
-  defaultMarkGeocode: false
-})
-.on('markgeocode', function(e) {
-  const lat = e.geocode.center.lat.toFixed(2);
-  const lon = e.geocode.center.lng.toFixed(2);
-  const locationName = e.geocode.name; // 👈 اسم المكان
-  const rainProb = getRainProbability();
-  const time = getCurrentTime();
-  const id = generateId();
-
-  map.setView([lat, lon], 10);
-
-  addHistoryRow(id, lat, lon, rainProb, time);
-  saveToLocalStorage(id, lat, lon, rainProb, time);
-
-  document.getElementById("result").innerHTML = `
-    <h3>📍 Location: ${locationName} (${lat}, ${lon})</h3>
-    <p>🌧️ Rain Probability: <strong>${rainProb}%</strong></p>
-    <p>🕒 Time: ${time}</p>
-  `;
-})
-
-.addTo(map);
-
-
-    // ✅ Toggle Mode
-    const modeToggle = document.getElementById("mode-toggle");
-    modeToggle.addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-      modeToggle.textContent = document.body.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode";
-    });
-
-    // ✅ Contact Form
-    const form = document.querySelector("#contact form");
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      alert("✅ Your message has been sent successfully!");
-      form.reset();
+    // لما تدوس "Yes"
+    yesBtn.addEventListener("click", () => {
+      result.style.display = "block";
     });
   </script>
 </body>
