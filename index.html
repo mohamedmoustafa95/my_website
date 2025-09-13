@@ -21,7 +21,7 @@
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: #5804f3;
+    background: #04f368;
     color: #ffffff;
   }
 
@@ -137,18 +137,19 @@
   </section>
 
   <!-- Features Section -->
-  <section id="features">
-    <h2>✨ Features</h2>
-    <ul>
-      <li>Interactive map with markers</li>
-      <li>Prediction history stored locally</li>
-      <li>Dark/Light map modes</li>
-      <li>Responsive mobile design</li>
-      <li>Easy navigation with smooth scroll</li>
-      <li>Custom notifications and alerts</li>
-      <li>Team showcase section</li>
-    </ul>
-  </section>
+<section id="features">
+  <h2>✨ Features</h2>
+  <ul>
+    <li><a href="map.html" target="_blank">🗺️ Interactive map with markers</a></li>
+    <li><a href="history.html" target="_blank">📊 Prediction history stored locally</a></li>
+    <li><a href="darkmode.html" target="_blank">🌙 Dark/Light map modes</a></li>
+    <li><a href="responsive.html" target="_blank">📱 Responsive mobile design</a></li>
+    <li><a href="navigation.html" target="_blank">🧭 Easy navigation with smooth scroll</a></li>
+    <li><a href="notifications.html" target="_blank">🔔 Custom notifications and alerts</a></li>
+    <li><a href="team.html" target="_blank">👨‍🚀 Team showcase section</a></li>
+  </ul>
+</section>
+
 
   <!-- Team Section -->
   <section id="team">
@@ -319,6 +320,7 @@ var geocoder = L.Control.geocoder({
 .on('markgeocode', function(e) {
   const lat = e.geocode.center.lat.toFixed(2);
   const lon = e.geocode.center.lng.toFixed(2);
+  const locationName = e.geocode.name; // 👈 اسم المكان
   const rainProb = getRainProbability();
   const time = getCurrentTime();
   const id = generateId();
@@ -329,11 +331,12 @@ var geocoder = L.Control.geocoder({
   saveToLocalStorage(id, lat, lon, rainProb, time);
 
   document.getElementById("result").innerHTML = `
-    <h3>📍 Location: (${lat}, ${lon})</h3>
+    <h3>📍 Location: ${locationName} (${lat}, ${lon})</h3>
     <p>🌧️ Rain Probability: <strong>${rainProb}%</strong></p>
     <p>🕒 Time: ${time}</p>
   `;
 })
+
 .addTo(map);
 
 
