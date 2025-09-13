@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Do You Love Me?</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: pink;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    img {
+      width: 150px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      position: relative;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+      position: absolute;
+    }
+
+    #yesBtn {
+      background: #ff4d79;
+      color: white;
+      left: 100px;
+    }
+
+    #noBtn {
+      background: #ccc;
+      color: black;
+      right: 100px;
+    }
+
+    .result {
+      display: none;
+      margin-top: 20px;
+      font-size: 24px;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="questionContainer">
+    <img src="200.webp" alt="cute gif">
+    <h1>Do you love me?</h1>
+    <div class="buttons">
+      <button id="yesBtn">Yes</button>
+      <button id="noBtn">No</button>
+    </div>
+
+
+
+    <div class="result" id="resultContainer">        I love you too! 💖</div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const container = document.getElementById("questionContainer");
+    const result = document.getElementById("resultContainer");
+
+    // زرار "No" بيهرب عند مرور الماوس
+    noBtn.addEventListener("mouseover", () => {
+      const containerRect = container.getBoundingClientRect();
+      const x = Math.floor(Math.random() * (containerRect.width - noBtn.offsetWidth));
+      const y = Math.floor(Math.random() * (containerRect.height - noBtn.offsetHeight));
+
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+    });
+
+    // لما تدوس "Yes"
+    yesBtn.addEventListener("click", () => {
+      result.style.display = "block";
+    });
+  </script>
+</body>
+</html>
